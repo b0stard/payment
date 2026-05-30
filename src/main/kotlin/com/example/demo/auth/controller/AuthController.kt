@@ -1,8 +1,8 @@
 package com.example.demo.auth.controller
 
-import com.example.demo.auth.AuthResponse
-import com.example.demo.auth.LoginRequest
-import com.example.demo.auth.RegisterRequest
+import com.example.demo.auth.dto.AuthResponse
+import com.example.demo.auth.dto.LoginRequest
+import com.example.demo.auth.dto.RegisterRequest
 import com.example.demo.auth.service.AuthService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus

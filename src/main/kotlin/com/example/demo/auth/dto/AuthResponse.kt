@@ -1,4 +1,4 @@
-package com.example.demo.auth
+package com.example.demo.auth.dto
 
 data class AuthResponse(
     val accessToken: String,

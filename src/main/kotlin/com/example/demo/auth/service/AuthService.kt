@@ -1,8 +1,8 @@
 package com.example.demo.auth.service
 
-import com.example.demo.auth.AuthResponse
-import com.example.demo.auth.LoginRequest
-import com.example.demo.auth.RegisterRequest
+import com.example.demo.auth.dto.AuthResponse
+import com.example.demo.auth.dto.LoginRequest
+import com.example.demo.auth.dto.RegisterRequest
 import com.example.demo.security.JwtTokenProvider
 import com.example.demo.user.model.User
 import com.example.demo.user.repository.UserRepository
