@@ -19,18 +19,6 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
-
-  kafka:
-    bootstrap-servers: kafka.railway.internal:29092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      group-id: cloudbox-storage
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-
 jwt:
   secret: ${mysecretkeymysecretkeymysecretkey123456}
   expiration: ${86400000}

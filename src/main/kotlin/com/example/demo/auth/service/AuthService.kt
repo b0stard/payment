@@ -4,8 +4,8 @@ import com.example.demo.auth.dto.AuthResponse
 import com.example.demo.auth.dto.LoginRequest
 import com.example.demo.auth.dto.RegisterRequest
 import com.example.demo.security.JwtTokenProvider
-import com.example.demo.user.model.User
-import com.example.demo.user.repository.UserRepository
+import com.example.demo.auth.user.model.User
+import com.example.demo.auth.user.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
