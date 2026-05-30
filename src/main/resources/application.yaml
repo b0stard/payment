@@ -9,22 +9,36 @@ spring:
     url: ${DATABASE_URL}
     username: ${PGUSER}
     password: ${PGPASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
 
   servlet:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+
 jwt:
-  secret: ${mysecretkeymysecretkeymysecretkey123456}
-  expiration: ${86400000}
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
 
 minio:
   endpoint: ${S3_ENDPOINT:https://storage.yandexcloud.net}
   access-key: ${S3_ACCESS_KEY}
   secret-key: ${S3_SECRET_KEY}
   bucket: doiki
+
+logging:
+  level:
+    com.example.cloudbox: INFO
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG
