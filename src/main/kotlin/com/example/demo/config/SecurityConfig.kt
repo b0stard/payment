@@ -1,4 +1,4 @@
-package com.example.cloudbox.config
+package com.example.demo.config
 
 
 import com.example.demo.security.JwtAuthFilter
