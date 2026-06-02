@@ -21,7 +21,7 @@ spring:
         format_sql: true
 
   flyway:
-    enabled: upload
+    enabled: false
 
   servlet:
     multipart:
@@ -43,10 +43,3 @@ logging:
     com.example.cloudbox: INFO
     org.springframework.security: INFO
     org.hibernate.SQL: DEBUG
-
-springdoc:
-      swagger-ui:
-        path: /swagger-ui.html
-
-      api-docs:
-        path: /api-docs
