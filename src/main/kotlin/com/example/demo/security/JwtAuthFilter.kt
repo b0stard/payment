@@ -20,32 +20,52 @@ class JwtAuthFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val authHeader = request.getHeader("Authorization")
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        val authHeader =
+            request.getHeader("Authorization")
+
+        if (
+            authHeader == null ||
+            !authHeader.startsWith("Bearer ")
+        ) {
             filterChain.doFilter(request, response)
             return
         }
 
-        val token = authHeader.substring(7)
+        try {
 
-        if (jwtTokenProvider.validateToken(token)) {
-            val userId = jwtTokenProvider.extractUserId(token)
+            val token =
+                authHeader.substring(7)
 
-            val userDetails = userDetailsService.loadUserByUsername(
-                userId.toString()
-            )
+            if (
+                jwtTokenProvider.validateToken(token)
+            ) {
 
-            val authentication = UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.authorities
-            )
+                val userId =
+                    jwtTokenProvider.extractUserId(token)
 
-            authentication.details =
-                WebAuthenticationDetailsSource().buildDetails(request)
+                val userDetails =
+                    userDetailsService.loadUserByUsername(
+                        userId.toString()
+                    )
 
-            SecurityContextHolder.getContext().authentication = authentication
+                val authentication =
+                    UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.authorities
+                    )
+
+                authentication.details =
+                    WebAuthenticationDetailsSource()
+                        .buildDetails(request)
+
+                SecurityContextHolder
+                    .getContext()
+                    .authentication = authentication
+            }
+
+        } catch (_: Exception) {
         }
 
         filterChain.doFilter(request, response)
