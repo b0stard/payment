@@ -14,14 +14,14 @@ class User(
 
     @Id
     @GeneratedValue
-    val id: UUID? = null,
+    var id: UUID? = null,
 
     @Column(nullable = false, unique = true)
-    val email: String,
+    var email: String,
 
     @Column(nullable = false)
-    val password: String,
+    var password: String,
 
     @Column(nullable = false)
-    val createdAt: Instant = Instant.now()
+    var createdAt: Instant = Instant.now()
 )
