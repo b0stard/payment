@@ -35,12 +35,30 @@ class AuthService(
 
     @Transactional
     fun login(request: LoginRequest): AuthResponse {
-        val user = userRepository.findByEmail(request.email)
-            ?: throw IllegalArgumentException("User not found")
-        if (!passwordEncoder.matches(request.password, user.password)) {
-            throw IllegalArgumentException("Passwords do not match")
+
+        val user = userRepository.findByEmail(
+            request.email
+        ) ?: throw IllegalArgumentException(
+            "User not found"
+        )
+
+        val isPasswordCorrect =
+            passwordEncoder.matches(
+                request.password,
+                user.password
+            )
+
+        if (!isPasswordCorrect) {
+            throw IllegalArgumentException(
+                "Invalid credentials"
+            )
         }
-        val token = jwtTokenProvider.generateToken(user.id!!)
+
+        val token =
+            jwtTokenProvider.generateToken(
+                user.id!!
+            )
+
         return AuthResponse(
             accessToken = token
         )
