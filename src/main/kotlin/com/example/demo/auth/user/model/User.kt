@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import java.time.LocalDateTime
 import java.util.UUID
 
 
@@ -22,6 +23,8 @@ class User(
     var email: String = "",
 
     @Column(nullable = false)
-    var password: String = ""
+    var password: String = "",
 
+    @Column(nullable = false)
+    var createdAt: LocalDateTime = LocalDateTime.now()
 )
