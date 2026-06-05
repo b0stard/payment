@@ -12,19 +12,19 @@ class FileObject(
     var id: UUID? = null,
 
     @Column(nullable = false)
-    var ownerId: UUID,
+    var ownerId: UUID? = null,
 
     @Column(nullable = false)
-    var originalFileName: String,
+    var originalFileName: String = "",
 
     @Column(nullable = false, unique = true)
-    var storageKey: String,
+    var storageKey: String = "",
 
     @Column(nullable = false)
-    var contentType: String,
+    var contentType: String = "",
 
     @Column(nullable = false)
-    var size: Long,
+    var size: Long = 0,
 
     @Column(nullable = false)
     var createdAt: Instant = Instant.now(),
