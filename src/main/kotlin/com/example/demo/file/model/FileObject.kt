@@ -9,7 +9,6 @@ import java.util.UUID
 class FileObject(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null,
 
     @Column(nullable = false)
