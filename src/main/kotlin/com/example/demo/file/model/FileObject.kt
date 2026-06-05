@@ -9,26 +9,26 @@ import java.util.UUID
 class FileObject(
 
     @Id
-    @GeneratedValue
-    val id: UUID? = null,
+    @GeneratedValue(strategy = GenerationType.UUID)
+    var id: UUID? = null,
 
     @Column(nullable = false)
-    val ownerId: UUID,
+    var ownerId: UUID,
 
     @Column(nullable = false)
     var originalFileName: String,
 
     @Column(nullable = false, unique = true)
-    val storageKey: String,
+    var storageKey: String,
 
     @Column(nullable = false)
-    val contentType: String,
+    var contentType: String,
 
     @Column(nullable = false)
-    val size: Long,
+    var size: Long,
 
     @Column(nullable = false)
-    val createdAt: Instant = Instant.now(),
+    var createdAt: Instant = Instant.now(),
 
     var deletedAt: Instant? = null
 )
