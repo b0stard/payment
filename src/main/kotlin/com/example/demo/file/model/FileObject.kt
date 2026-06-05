@@ -9,22 +9,23 @@ import java.util.UUID
 class FileObject(
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null,
 
     @Column(nullable = false)
-    var ownerId: UUID? = null,
+    var ownerId: UUID,
 
     @Column(nullable = false)
-    var originalFileName: String = "",
+    var originalFileName: String,
 
     @Column(nullable = false, unique = true)
-    var storageKey: String = "",
+    var storageKey: String,
 
     @Column(nullable = false)
-    var contentType: String = "",
+    var contentType: String,
 
     @Column(nullable = false)
-    var size: Long = 0,
+    var size: Long,
 
     @Column(nullable = false)
     var createdAt: Instant = Instant.now(),
