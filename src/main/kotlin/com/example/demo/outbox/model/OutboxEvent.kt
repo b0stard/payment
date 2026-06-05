@@ -3,6 +3,7 @@ package com.example.demo.outbox.model
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.Instant
@@ -13,26 +14,21 @@ import java.util.UUID
 class OutboxEvent(
 
     @Id
-    @GeneratedValue
-    val id: UUID? = null,
+    @GeneratedValue(strategy = GenerationType.UUID)
+    var id: UUID? = null,
 
     @Column(nullable = false)
-    val aggregateId: UUID,
+    var aggregateId: UUID? = null,
 
     @Column(nullable = false)
-    val aggregateType: String,
-
-    @Column(nullable = false)
-    val eventType: String,
+    var eventType: String = "",
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    val payload: String,
+    var payload: String = "",
 
     @Column(nullable = false)
     var processed: Boolean = false,
 
     @Column(nullable = false)
-    val createdAt: Instant = Instant.now(),
-
-    var processedAt: Instant? = null
+    var createdAt: Instant = Instant.now()
 )
