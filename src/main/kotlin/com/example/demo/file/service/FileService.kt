@@ -33,11 +33,10 @@ class FileService(
 
         validateFile(file)
 
-        val fileId = UUID.randomUUID()
         val originalFileName = file.originalFilename ?: "unknown"
         val contentType = file.contentType ?: "application/octet-stream"
 
-        val storageKey = "users/$currentUserId/files/$fileId"
+        val storageKey = "users/$currentUserId/files/${UUID.randomUUID()}"
 
         minioStorageService.upload(
             storageKey = storageKey,
@@ -48,7 +47,6 @@ class FileService(
 
         val fileObject = fileObjectRepository.save(
             FileObject(
-                id = fileId,
                 ownerId = currentUserId,
                 originalFileName = originalFileName,
                 storageKey = storageKey,
@@ -64,13 +62,6 @@ class FileService(
                 fileName = fileObject.originalFileName,
                 eventType = "FILE_UPLOADED"
             )
-        )
-
-        log.info(
-            "File uploaded. userId={}, fileId={}, fileName={}",
-            currentUserId,
-            fileObject.id,
-            fileObject.originalFileName
         )
 
         return fileObject.toResponse()
