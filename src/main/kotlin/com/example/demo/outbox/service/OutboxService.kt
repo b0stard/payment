@@ -6,7 +6,7 @@ import com.example.demo.outbox.repository.OutboxEventRepository
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.Instant
+
 
 @Service
 class OutboxService(
@@ -18,7 +18,6 @@ class OutboxService(
     fun createFileEvent(event: FileEvent) {
         val outboxEvent = OutboxEvent(
             aggregateId = event.fileId,
-            aggregateType = "FILE",
             eventType = event.eventType,
             payload = objectMapper.writeValueAsString(event)
         )
@@ -34,7 +33,6 @@ class OutboxService(
     @Transactional
     fun markAsProcessed(event: OutboxEvent) {
         event.processed = true
-        event.processedAt = Instant.now()
         outboxEventRepository.save(event)
     }
 }
