@@ -4,14 +4,13 @@ import com.example.demo.file.FileResponse
 import com.example.demo.file.RenameFileRequest
 import com.example.demo.file.service.FileService
 import jakarta.validation.Valid
+import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
-import java.security.Principal
 import java.util.UUID
 
 @RestController
@@ -20,69 +19,100 @@ class FileController(
     private val fileService: FileService
 ) {
 
-    @PostMapping(
-        "/upload",
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
-    )
+    @PostMapping("/upload")
     fun upload(
-        @RequestParam("file") file: MultipartFile,
-        principal: Principal
+        @RequestParam("file")
+        file: MultipartFile,
+        authentication: Authentication
     ): FileResponse {
-        val currentUserId = UUID.fromString(principal.name)
 
-        return fileService.upload(file, currentUserId)
+        val currentUserId =
+            UUID.fromString(authentication.name)
+
+        return fileService.upload(
+            file = file,
+            currentUserId = currentUserId
+        )
     }
 
     @GetMapping
     fun getMyFiles(
-        principal: Principal
+        authentication: Authentication
     ): List<FileResponse> {
-        val currentUserId = UUID.fromString(principal.name)
 
-        return fileService.getMyFiles(currentUserId)
+        val currentUserId =
+            UUID.fromString(authentication.name)
+
+        return fileService.getMyFiles(
+            currentUserId
+        )
     }
 
     @GetMapping("/{fileId}/download")
     fun download(
-        @PathVariable fileId: UUID,
-        principal: Principal
-    ): ResponseEntity<ByteArray> {
-        val currentUserId = UUID.fromString(principal.name)
+        @PathVariable
+        fileId: UUID,
+        authentication: Authentication
+    ): ResponseEntity<ByteArrayResource> {
 
-        val file = fileService.download(fileId, currentUserId)
+        val currentUserId =
+            UUID.fromString(authentication.name)
 
-        val encodedFileName = URLEncoder.encode(
-            file.fileName,
-            StandardCharsets.UTF_8
+        val file = fileService.download(
+            fileId = fileId,
+            currentUserId = currentUserId
         )
 
         return ResponseEntity.ok()
+            .contentType(
+                MediaType.parseMediaType(
+                    file.contentType
+                )
+            )
             .header(
                 HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"$encodedFileName\""
+                "attachment; filename=\"${file.fileName}\""
             )
-            .contentType(MediaType.parseMediaType(file.contentType))
-            .body(file.bytes)
+            .body(
+                ByteArrayResource(file.bytes)
+            )
     }
 
     @PatchMapping("/{fileId}/rename")
     fun rename(
-        @PathVariable fileId: UUID,
-        @RequestBody @Valid request: RenameFileRequest,
-        principal: Principal
-    ): FileResponse {
-        val currentUserId = UUID.fromString(principal.name)
+        @PathVariable
+        fileId: UUID,
 
-        return fileService.rename(fileId, request, currentUserId)
+        @Valid
+        @RequestBody
+        request: RenameFileRequest,
+
+        authentication: Authentication
+    ): FileResponse {
+
+        val currentUserId =
+            UUID.fromString(authentication.name)
+
+        return fileService.rename(
+            fileId = fileId,
+            request = request,
+            currentUserId = currentUserId
+        )
     }
 
     @DeleteMapping("/{fileId}")
     fun delete(
-        @PathVariable fileId: UUID,
-        principal: Principal
+        @PathVariable
+        fileId: UUID,
+        authentication: Authentication
     ) {
-        val currentUserId = UUID.fromString(principal.name)
 
-        fileService.delete(fileId, currentUserId)
+        val currentUserId =
+            UUID.fromString(authentication.name)
+
+        fileService.delete(
+            fileId = fileId,
+            currentUserId = currentUserId
+        )
     }
 }

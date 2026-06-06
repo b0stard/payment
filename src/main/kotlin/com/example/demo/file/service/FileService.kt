@@ -33,38 +33,60 @@ class FileService(
 
         validateFile(file)
 
-        val originalFileName = file.originalFilename ?: "unknown"
-        val contentType = file.contentType ?: "application/octet-stream"
+        val originalFileName =
+            file.originalFilename ?: "unknown"
 
-        val storageKey = "users/$currentUserId/files/${UUID.randomUUID()}"
+        val contentType =
+            file.contentType ?: "application/octet-stream"
 
-        minioStorageService.upload(
-            storageKey = storageKey,
-            inputStream = file.inputStream,
-            size = file.size,
-            contentType = contentType
-        )
+        val storageKey =
+            "users/$currentUserId/files/${UUID.randomUUID()}"
 
-        val fileObject = fileObjectRepository.save(
-            FileObject(
-                ownerId = currentUserId,
-                originalFileName = originalFileName,
+        try {
+
+            minioStorageService.upload(
                 storageKey = storageKey,
-                contentType = contentType,
-                size = file.size
+                inputStream = file.inputStream,
+                size = file.size,
+                contentType = contentType
             )
-        )
 
-        outboxService.createFileEvent(
-            FileEvent(
-                fileId = fileObject.id!!,
-                ownerId = currentUserId,
-                fileName = fileObject.originalFileName,
-                eventType = "FILE_UPLOADED"
+            val fileObject =
+                fileObjectRepository.save(
+                    FileObject(
+                        ownerId = currentUserId,
+                        originalFileName = originalFileName,
+                        storageKey = storageKey,
+                        contentType = contentType,
+                        size = file.size
+                    )
+                )
+
+            outboxService.createFileEvent(
+                FileEvent(
+                    fileId = fileObject.id!!,
+                    ownerId = currentUserId,
+                    fileName = fileObject.originalFileName,
+                    eventType = "FILE_UPLOADED"
+                )
             )
-        )
 
-        return fileObject.toResponse()
+            log.info(
+                "File uploaded. userId={}, fileId={}",
+                currentUserId,
+                fileObject.id
+            )
+
+            return fileObject.toResponse()
+
+        } catch (e: Exception) {
+
+            runCatching {
+                minioStorageService.delete(storageKey)
+            }
+
+            throw e
+        }
     }
 
     fun getMyFiles(
@@ -103,23 +125,17 @@ class FileService(
         currentUserId: UUID
     ): FileResponse {
 
-        val fileObject = getUserFile(
-            fileId,
-            currentUserId
-        )
+        val fileObject =
+            getUserFile(fileId, currentUserId)
 
         fileObject.originalFileName =
             request.newFileName
 
-        val updatedFile = fileObjectRepository.save(
-            fileObject
-        )
-
         outboxService.createFileEvent(
             FileEvent(
-                fileId = updatedFile.id!!,
+                fileId = fileObject.id!!,
                 ownerId = currentUserId,
-                fileName = updatedFile.originalFileName,
+                fileName = fileObject.originalFileName,
                 eventType = "FILE_RENAMED"
             )
         )
@@ -127,11 +143,11 @@ class FileService(
         log.info(
             "File renamed. userId={}, fileId={}, newName={}",
             currentUserId,
-            updatedFile.id,
-            updatedFile.originalFileName
+            fileObject.id,
+            fileObject.originalFileName
         )
 
-        return updatedFile.toResponse()
+        return fileObject.toResponse()
     }
 
     @Transactional
@@ -140,16 +156,11 @@ class FileService(
         currentUserId: UUID
     ) {
 
-        val fileObject = getUserFile(
-            fileId,
-            currentUserId
-        )
+        val fileObject =
+            getUserFile(fileId, currentUserId)
 
-        fileObject.deletedAt = Instant.now()
-
-        fileObjectRepository.save(
-            fileObject
-        )
+        fileObject.deletedAt =
+            Instant.now()
 
         outboxService.createFileEvent(
             FileEvent(

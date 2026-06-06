@@ -30,5 +30,6 @@ class FileObject(
     @Column(nullable = false)
     var createdAt: Instant = Instant.now(),
 
+    @Column
     var deletedAt: Instant? = null
 )
