@@ -23,25 +23,21 @@ class SecurityConfig(
         return http
             .csrf { it.disable() }
 
-            .sessionManagement {
-                it.sessionCreationPolicy(
-                    SessionCreationPolicy.STATELESS
-                )
-            }
-
             .authorizeHttpRequests {
 
                 it.requestMatchers(
                     "/api/auth/**",
                     "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/v3/api-docs/**",
-                    "/v3/api-docs",
-                    "/error"
+                    "/v3/api-docs/**"
                 ).permitAll()
 
-                it.anyRequest()
-                    .authenticated()
+                it.anyRequest().authenticated()
+            }
+
+            .sessionManagement {
+                it.sessionCreationPolicy(
+                    SessionCreationPolicy.STATELESS
+                )
             }
 
             .addFilterBefore(
