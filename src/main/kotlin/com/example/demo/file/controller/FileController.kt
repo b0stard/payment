@@ -19,10 +19,14 @@ class FileController(
     private val fileService: FileService
 ) {
 
-    @PostMapping("/upload")
+    @PostMapping(
+        "/upload",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
+    )
     fun upload(
         @RequestParam("file")
         file: MultipartFile,
+
         authentication: Authentication
     ): FileResponse {
 
